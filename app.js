@@ -7,8 +7,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const multer = require('multer');
 // Local imports
-const feedRoutes = require('./routes/feed');
-const authRoutes = require('./routes/auth');
+
 // Global variables
 const port = process.env.SERVER_PORT;
 const app = express();
@@ -43,9 +42,6 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
 });
-// Using routes
-app.use('/feed', feedRoutes);
-app.use('/auth', authRoutes);
 // Global error handler
 app.use((error, req, res, next) => {
   console.log(error);
@@ -61,17 +57,7 @@ app.use((error, req, res, next) => {
 mongoose
   .connect(process.env.MONGO_URI)
   .then((res) => {
-    // app listen returns a nodejs server
-    const nodeServer = app.listen(port);
-    // we pass server to function exposed by socket io package
-    // it will establish websockets on http
-    const io = require('./socket').init(nodeServer);
-    // and now we create event listeners like this
-    // this function is executed on every new client that connects to server
-    io.on('connection', (socket) => {
-      console.log('Client connected');
-    });
-
+    app.listen(port);
     console.log(`Server is running on port - ${port}`);
   })
   .catch((err) => console.log(err));
