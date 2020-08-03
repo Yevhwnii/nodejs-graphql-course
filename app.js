@@ -10,6 +10,7 @@ const { graphqlHTTP } = require('express-graphql');
 // Local imports
 const graphqlSchema = require('./graphql/schema');
 const graphqlResolver = require('./graphql/resolvers');
+const auth = require('./middleware/auth');
 // Global variables
 const port = process.env.SERVER_PORT;
 const app = express();
@@ -50,6 +51,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// Middleware which checks is there token in request header and if it  is valid
+app.use(auth);
+// Graphql route with configuration
 app.use(
   '/graphql',
   graphqlHTTP({
